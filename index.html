@@ -1,1 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IT Quiz Pro</title>
+<style>
+body{margin:0;background:#0f172a;color:#fff;font-family:Arial}
+.box{max-width:450px;margin:20px auto;background:#1e293b;padding:20px;border-radius:15px}
+input,button{width:100%;padding:12px;margin:8px 0;border:none;border-radius:10px}
+input{background:#334155;color:#fff}
+button{background:#2563eb;color:#fff;font-weight:bold}
+.opt{background:#334155;padding:12px;margin:8px 0;border-radius:10px;cursor:pointer}
+.opt:hover{background:#475569}
+.hide{display:none}
+.top{display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
 
+<div class="box">
+<div id="login">
+<h2 align="center">IT Quiz Pro</h2>
+<input id="name" placeholder="Enter Name">
+<button onclick="start()">Start</button>
+</div>
+
+<div id="quiz" class="hide">
+<div class="top"><span id="no"></span><span>⏱ <span id="t">20</span></span></div>
+<h3 id="cat"></h3>
+<h2 id="q"></h2>
+<div id="ops"></div>
+<button onclick="next()">Next</button>
+</div>
+
+<div id="result" class="hide" align="center">
+<h2>Quiz Complete</h2>
+<h3 id="sc"></h3>
+<p id="hs"></p>
+<button onclick="location.reload()">Play Again</button>
+</div>
+</div>
+
+<script>
+const bank=[
+{c:"C",q:"Which symbol ends a C statement?",o:[";",":",".","#"],a:0},
+{c:"C",q:"Which function prints output?",o:["scanf","printf","main","clrscr"],a:1},
+{c:"C",q:"Which header is used for printf?",o:["math.h","stdio.h","conio.h","string.h"],a:1},
+{c:"C",q:"Which loop runs at least once?",o:["for","while","do while","none"],a:2},
+{c:"C",q:"Array index starts from?",o:["1","0","2","-1"],a:1},
+{c:"C",q:"Keyword to return value?",o:["exit","return","break","goto"],a:1},
+{c:"C",q:"Which operator is logical AND?",o:["&","&&","||","!"],a:1},
+{c:"C",q:"Which data type stores decimal?",o:["int","char","float","void"],a:2},
+{c:"OS",q:"FCFS means?",o:["First Come First Served","Fast CPU First","First CPU Schedule","None"],a:0},
+{c:"OS",q:"Which scheduling uses time slice?",o:["FCFS","Round Robin","SJF","FIFO"],a:1},
+{c:"OS",q:"Which is not an OS?",o:["Windows","Linux","Oracle","Android"],a:2},
+{c:"OS",q:"CPU scheduling selects?",o:["Monitor","Process","Mouse","Keyboard"],a:1},
+{c:"OS",q:"Deadlock involves?",o:["One process","Waiting processes","Only RAM","Monitor"],a:1},
+{c:"OS",q:"Banker's algorithm prevents?",o:["Virus","Deadlock","Crash","Boot"],a:1},
+{c:"CF",q:"CPU full form?",o:["Central Processing Unit","Computer Power Unit","Control Program Unit","None"],a:0},
+{c:"CF",q:"RAM is?",o:["Permanent","Volatile","Optical","Magnetic"],a:1},
+{c:"CF",q:"ROM is?",o:["Temporary","Permanent","Cache","Virtual"],a:1},
+{c:"CF",q:"Binary uses?",o:["0 & 1","1 & 2","A & B","8 & 9"],a:0},
+{c:"CF",q:"Input device?",o:["Monitor","Printer","Keyboard","Speaker"],a:2},
+{c:"NET",q:"DNS converts?",o:["IP to CPU","Domain to IP","Text to Image","URL to HTML"],a:1},
+{c:"NET",q:"HTML stands for?",o:["Hyper Text Markup Language","Home Tool Markup Language","High Transfer Machine Language","None"],a:0},
+{c:"NET",q:"TCP/IP is?",o:["Browser","Protocol","Language","OS"],a:1},
+{c:"NET",q:"FTP is used for?",o:["Gaming","File Transfer","Printing","Email"],a:1},
+{c:"NET",q:"URL means?",o:["Uniform Resource Locator","Universal Link","User Resource","None"],a:0},
+{c:"NET",q:"Search engine example?",o:["Chrome","Google","HTML","Windows"],a:1},
+{c:"NET",q:"Encryption means?",o:["Hide data","Delete data","Print data","Copy data"],a:0},
+{c:"NET",q:"Website is?",o:["Single page","Collection of webpages","File","Folder"],a:1},
+{c:"NET",q:"Browser example?",o:["Google","Chrome","DNS","IP"],a:1},
+{c:"OS",q:"SJF stands for?",o:["Shortest Job First","Small Job Fast","System Job First","None"],a:0},
+{c:"C",q:"main() is?",o:["Loop","Function","Variable","Header"],a:1}
+];
+
+let quiz=[],i=0,s=0,p=-1,time=20,intv;
+
+function start(){
+let n=document.getElementById("name").value.trim();
+if(!n)return alert("Enter name");
+localStorage.setItem("player",n);
+quiz=[...bank].sort(()=>Math.random()-0.5).slice(0,10);
+document.getElementById("login").classList.add("hide");
+document.getElementById("quiz").classList.remove("hide");
+load();
+}
+function load(){
+p=-1;time=20;
+document.getElementById("t").innerText=time;
+document.getElementById("no").innerText=`${i+1}/10`;
+document.getElementById("cat").innerText="Category: "+quiz[i].c;
+document.getElementById("q").innerText=quiz[i].q;
+let h="";
+quiz[i].o.forEach((x,n)=>h+=`<div class=opt onclick='pick(${n},this)'>${x}</div>`);
+document.getElementById("ops").innerHTML=h;
+clearInterval(intv);
+intv=setInterval(()=>{time--;t.innerText=time;if(time==0)next();},1000);
+}
+function pick(n,e){
+p=n;
+document.querySelectorAll(".opt").forEach(x=>x.style.background="#334155");
+e.style.background="#2563eb";
+}
+function next(){
+clearInterval(intv);
+if(p==quiz[i].a)s++;
+i++;
+if(i<10)load();else end();
+}
+function end(){
+quizDiv=document.getElementById("quiz");
+quizDiv.classList.add("hide");
+result.classList.remove("hide");
+let name=localStorage.getItem("player");
+sc.innerText=`${name}: ${s}/10`;
+let best=+localStorage.getItem("best")||0;
+if(s>best){best=s;localStorage.setItem("best",best);}
+hs.innerText="High Score: "+best+"/10";
+}
+</script>
+</body>
+</html>
